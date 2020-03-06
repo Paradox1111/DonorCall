@@ -1,26 +1,30 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import logo from "./logo.svg";
+import { Link, Route, Switch } from "react-router-dom";
+import Donors from "./components/Donors";
+import Stewards from "./components/Stewards";
+import NewSteward from "./components/NewSteward";
+import NewDonor from "./components/NewDonor";
+import "./App.css";
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+	return (
+		<nav>
+			<nav>
+				<Link to='/'>All donors</Link>
+				<Link to='/stewards'>Stewards</Link>
+				<Link to='/stewards/new'>New steward</Link>
+				<Link to='/donors/new'>New donor</Link>
+				<Link>Login/Logout</Link>
+			</nav>
+			<Switch>
+				<Route exact path='/' component={Donors} />
+				<Route path='/stewards/new' render={NewSteward} />
+				<Route path='/stewards' component={Stewards} />
+				<Route path='/donors/new' render={NewDonor} />
+			</Switch>
+		</nav>
+	);
 }
 
 export default App;
