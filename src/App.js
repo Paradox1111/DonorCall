@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Link, Route, Switch } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Donors from "./components/Donors";
 import Stewards from "./components/Stewards";
 import NewSteward from "./components/NewSteward";
@@ -25,7 +25,7 @@ function App() {
 	const refresh = () => {
 		const url = "https://donor-call-api.herokuapp.com/api/token/refresh/";
 		axios
-			.post(url, user.tokens.refresh)
+			.post(url, { refresh: user.tokens.refresh })
 			.then(response =>
 				setUser({
 					username: user.username,
@@ -37,6 +37,9 @@ function App() {
 			)
 			.catch(console.error);
 	};
+	useEffect(() => {
+		console.log(user);
+	});
 	const login = e => {
 		e.preventDefault();
 		const tempUser = {
@@ -58,16 +61,22 @@ function App() {
 	return (
 		<Container>
 			<Row>
-				<Navbar>
-					<Navbar.Brand href='/'>Donor Call</Navbar.Brand>
+				<Navbar className='nav'>
+					<Navbar.Brand className='title' href='/'>
+						Donor Call
+					</Navbar.Brand>
 					<Navbar.Toggle aria-controls='basic-navbar-nav' />
 					<Navbar.Collapse id='basic-navbar-nav'></Navbar.Collapse>
 					<Nav>
-						<Nav.Link href='/'>Donors</Nav.Link>
+						<Nav.Link className='link' className='link' href='/'>
+							Donors
+						</Nav.Link>
 
-						<Nav.Link href='/stewards'>Stewards</Nav.Link>
+						<Nav.Link className='link' href='/stewards'>
+							Stewards
+						</Nav.Link>
 
-						<NavDropdown title='New'>
+						<NavDropdown className='dropdown' title='New'>
 							<NavDropdown.Item href='/stewards/new'>
 								Add a steward
 							</NavDropdown.Item>
@@ -78,9 +87,13 @@ function App() {
 						</NavDropdown>
 
 						{!user ? (
-							<Nav.Link onClick={showLogin}>Login</Nav.Link>
+							<Nav.Link className='link' onClick={showLogin}>
+								Login
+							</Nav.Link>
 						) : (
-							<Nav.Link onClick={handleLogout}>Logout</Nav.Link>
+							<Nav.Link className='link' onClick={handleLogout}>
+								Logout
+							</Nav.Link>
 						)}
 					</Nav>
 				</Navbar>
