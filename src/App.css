@@ -6,9 +6,17 @@
 	background-color: white;
 	color: white;
 	padding: 8px;
+	border: 1px lightgray solid;
+}
+.link:active {
+	background-color: lightgray;
 }
 .dropdown {
 	background-color: white;
+	margin: 1px;
+}
+.dropdown:active {
+	background-color: lightgray;
 }
 @media only screen and (max-width: 400px) {
 	.title {

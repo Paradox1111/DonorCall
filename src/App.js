@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import ls from "local-storage";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Route, Switch } from "react-router-dom";
+import { Route, Switch, useHistory } from "react-router-dom";
 import Donors from "./components/Donors";
 import Stewards from "./components/Stewards";
 import NewSteward from "./components/NewSteward";
@@ -12,9 +13,15 @@ import "./App.css";
 import { Nav, Row, Container, NavDropdown, Navbar } from "react-bootstrap";
 
 function App() {
+	// let tempUser = JSON.parse(localStorage.getItem("user")) || null;
 	const [user, setUser] = useState(null);
 	const [show, setShow] = useState(false);
-
+	const [donors, setDonors] = useState(null);
+	useEffect(() => {
+		if (ls.get("user")) {
+			setUser(ls.get("user"));
+		}
+	}, []);
 	const hideLogin = () => {
 		setShow(false);
 	};
@@ -37,25 +44,45 @@ function App() {
 			)
 			.catch(console.error);
 	};
-	useEffect(() => {
-		console.log(user);
-	});
 	const login = e => {
-		e.preventDefault();
-		const tempUser = {
-			username: e.target.username.value,
-			password: e.target.password.value
-		};
+		let tempUser;
+		if (e) {
+			e.preventDefault();
+			tempUser = {
+				username: e.target.username.value,
+				password: e.target.password.value
+			};
+		}
 		const url = "https://donor-call-api.herokuapp.com/api/token/";
 		axios.post(url, tempUser).then(response => {
-			setUser({
-				username: tempUser.username,
-				tokens: response.data
-			});
+			if (response.data.access) {
+				setUser({
+					username: tempUser.username,
+					tokens: response.data
+				});
+				ls.set("user", {
+					username: tempUser.username,
+					tokens: response.data
+				});
+				getDonors(response.data.access);
+			}
 		});
 	};
-	const handleLogout = () => {
+	const logout = () => {
 		setUser(null);
+		ls.set("user", null);
+	};
+	const getDonors = access => {
+		const config = {
+			headers: { Authorization: `Bearer ${access}` }
+		};
+		const url = "https://donor-call-api.herokuapp.com/donors";
+		axios
+			.get(url, config)
+			.then(response => {
+				setDonors(response.data);
+			})
+			.catch(console.error);
 	};
 
 	return (
@@ -91,7 +118,7 @@ function App() {
 								Login
 							</Nav.Link>
 						) : (
-							<Nav.Link className='link' onClick={handleLogout}>
+							<Nav.Link className='link' onClick={logout}>
 								Logout
 							</Nav.Link>
 						)}
