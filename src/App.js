@@ -2,14 +2,13 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import ls from "local-storage";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { Route, Switch, useHistory } from "react-router-dom";
+import { Route, Switch } from "react-router-dom";
 import Donors from "./components/Donors";
 import Stewards from "./components/Stewards";
 import NewSteward from "./components/NewSteward";
 import NewDonor from "./components/NewDonor";
 import Login from "./components/Login";
 import "./App.css";
-
 import { Nav, Row, Container, NavDropdown, Navbar } from "react-bootstrap";
 
 function App() {
@@ -67,9 +66,13 @@ function App() {
 				getDonors(response.data.access);
 			}
 		});
+		setTimeout(() => {
+			hideLogin();
+		}, 750);
 	};
 	const logout = () => {
 		setUser(null);
+		setDonors(null);
 		ls.set("user", null);
 	};
 	const getDonors = access => {
@@ -129,7 +132,18 @@ function App() {
 			<Row>
 				<main>
 					<Switch>
-						<Route exact path='/' component={Donors} />
+						<Route
+							exact
+							path='/'
+							render={() => (
+								<Donors
+									donors={donors}
+									showLogin={showLogin}
+									hideLogin={hideLogin}
+									getDonors={getDonors}
+								/>
+							)}
+						/>
 						<Route exact path='/stewards/new' render={NewSteward} />
 						<Route path='/stewards' component={Stewards} />
 						<Route path='/donors/new' render={NewDonor} />
