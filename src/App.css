@@ -1,6 +1,13 @@
+body {
+	background: grey;
+	padding-top: 60px;
+}
 .nav {
 	background-color: lightgrey;
 	width: 100%;
+	margin-bottom: 1px;
+	margin-top: -2px;
+	border: 2px solid black;
 }
 .link {
 	background-color: white;
@@ -18,7 +25,15 @@
 .dropdown:active {
 	background-color: lightgray;
 }
-@media only screen and (max-width: 400px) {
+.donors {
+	display: grid;
+	grid-template-columns: 2;
+}
+.donorCard {
+	grid-column-start: auto;
+	margin-top: 10px;
+}
+@media only screen and (max-width: 420px) {
 	.title {
 		display: none;
 	}

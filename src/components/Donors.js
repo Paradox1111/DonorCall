@@ -1,5 +1,6 @@
 import React, { useEffect } from "react";
-import { Card, Button } from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { Card, Button, Col, Row, Container, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
 
 function Donors(props) {
@@ -19,24 +20,48 @@ function Donors(props) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return
 		let filteredDonors = props.donors.map(donor => (
-			<Card key={donor.id} style={{ width: "18rem" }}>
-				<Card.Body>
-					{donor.lastname ? (
-						<Card.Title>
-							{donor.orgName} {donor.lastname}
-						</Card.Title>
-					) : (
-						<Card.Title>{donor.orgName}</Card.Title>
-					)}
-					<Card.Text>
-						Some quick example text to build on the card title and make up the
-						bulk of the card's content.
-					</Card.Text>
-					<Button variant='primary'>Go somewhere</Button>
-				</Card.Body>
-			</Card>
+			<Col key={donor.id}>
+				<Card className='donorCard' style={{ width: "18rem" }}>
+					<Card.Body>
+						{donor.lastname ? (
+							<Card.Title>
+								{donor.orgName} {donor.lastname}
+							</Card.Title>
+						) : (
+							<Card.Title>{donor.orgName}</Card.Title>
+						)}
+						<Card.Text>
+							<ListGroup>
+								<ListGroup.Item variant='info'>
+									Year total: {donor.yeartotal}
+								</ListGroup.Item>
+								<ListGroup.Item variant='secondary'>
+									Last gift: {donor.lastgift}, {donor.lastgiftdate}
+								</ListGroup.Item>
+								{donor.phone != "" ? (
+									<ListGroup.Item variant='info'>
+										Phone: {donor.phone}
+									</ListGroup.Item>
+								) : (
+									<ListGroup.Item variant='info' disabled>
+										No phone number available
+									</ListGroup.Item>
+								)}
+							</ListGroup>
+						</Card.Text>
+						<Button variant='outline-primary' block>
+							<Link to={"/donors/" + donor.id}>View details</Link>
+						</Button>
+					</Card.Body>
+				</Card>
+			</Col>
 		));
-		return <div>{filteredDonors}</div>;
+		return (
+			<div>
+				<Row></Row>
+				<Row>{filteredDonors}</Row>
+			</div>
+		);
 	} else if (!ls.get("user")) {
 		return null;
 	} else {

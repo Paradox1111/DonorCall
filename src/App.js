@@ -91,13 +91,13 @@ function App() {
 	return (
 		<Container>
 			<Row>
-				<Navbar className='nav'>
+				<Navbar fixed='top' className='nav'>
 					<Navbar.Brand className='title' href='/'>
 						Donor Call
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls='basic-navbar-nav' />
 					<Navbar.Collapse id='basic-navbar-nav'></Navbar.Collapse>
-					<Nav>
+					<Nav variant='pills'>
 						<Nav.Link className='link' className='link' href='/'>
 							Donors
 						</Nav.Link>
