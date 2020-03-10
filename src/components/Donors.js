@@ -2,9 +2,18 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
+import DonorModal from "./DonorModal";
 
 function Donors(props) {
 	// const [query, setQuery] = useState(null);
+	const [show, setShow] = useState(false);
+	const [currentDonor, setCurrentDonor] = useState(null);
+	const handleHide = () => {
+		setShow(false);
+	};
+	const handleShow = () => {
+		setShow(true);
+	};
 	useEffect(() => {
 		if (!ls.get("user")) {
 			//if a user is not currently logged in
@@ -50,8 +59,15 @@ function Donors(props) {
 							)}
 						</ListGroup>
 
-						<Button variant='outline-primary' block>
-							<Link to={"/donors/" + donor.id}>View details</Link>
+						<Button
+							onClick={() => {
+								setCurrentDonor(donor);
+								setShow(true);
+							}}
+							variant='outline-primary'
+							block
+						>
+							View details
 						</Button>
 					</Card.Body>
 				</Card>
@@ -60,6 +76,9 @@ function Donors(props) {
 		return (
 			<div>
 				<Row>Search Bar</Row>
+
+				<DonorModal show={show} handleHide={handleHide} donor={currentDonor} />
+
 				<Row>{filteredDonors}</Row>
 			</div>
 		);
