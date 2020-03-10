@@ -1,9 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Card, Button, Col, Row, Container, ListGroup } from "react-bootstrap";
+import { Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
 
 function Donors(props) {
+	// const [query, setQuery] = useState(null);
 	useEffect(() => {
 		if (!ls.get("user")) {
 			//if a user is not currently logged in
@@ -21,34 +22,34 @@ function Donors(props) {
 		// map over donors and return
 		let filteredDonors = props.donors.map(donor => (
 			<Col key={donor.id}>
-				<Card className='donorCard' style={{ width: "18rem" }}>
+				<Card className='donorCard' style={{ width: "22rem" }}>
 					<Card.Body>
 						{donor.lastname ? (
-							<Card.Title>
+							<Card.Header>
 								{donor.orgName} {donor.lastname}
-							</Card.Title>
+							</Card.Header>
 						) : (
-							<Card.Title>{donor.orgName}</Card.Title>
+							<Card.Header>{donor.orgName}</Card.Header>
 						)}
-						<Card.Text>
-							<ListGroup>
+
+						<ListGroup>
+							<ListGroup.Item variant='info'>
+								Year total: {donor.yeartotal}
+							</ListGroup.Item>
+							<ListGroup.Item variant='secondary'>
+								Last gift: {donor.lastgift}, {donor.lastgiftdate}
+							</ListGroup.Item>
+							{donor.phone != "" ? (
 								<ListGroup.Item variant='info'>
-									Year total: {donor.yeartotal}
+									Phone: {donor.phone}
 								</ListGroup.Item>
-								<ListGroup.Item variant='secondary'>
-									Last gift: {donor.lastgift}, {donor.lastgiftdate}
+							) : (
+								<ListGroup.Item variant='info' disabled>
+									No phone number available
 								</ListGroup.Item>
-								{donor.phone != "" ? (
-									<ListGroup.Item variant='info'>
-										Phone: {donor.phone}
-									</ListGroup.Item>
-								) : (
-									<ListGroup.Item variant='info' disabled>
-										No phone number available
-									</ListGroup.Item>
-								)}
-							</ListGroup>
-						</Card.Text>
+							)}
+						</ListGroup>
+
 						<Button variant='outline-primary' block>
 							<Link to={"/donors/" + donor.id}>View details</Link>
 						</Button>
@@ -58,7 +59,7 @@ function Donors(props) {
 		));
 		return (
 			<div>
-				<Row></Row>
+				<Row>Search Bar</Row>
 				<Row>{filteredDonors}</Row>
 			</div>
 		);
