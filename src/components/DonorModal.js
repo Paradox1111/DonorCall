@@ -19,7 +19,7 @@ function DonorModal(props) {
 				</Modal.Header>
 				<Modal.Body>
 					<ListGroup>
-						{props.donor.phone != "" ? (
+						{props.donor.phone !== "" ? (
 							<ListGroup.Item variant='info'>
 								Phone: {props.donor.phone}
 							</ListGroup.Item>

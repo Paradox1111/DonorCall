@@ -48,7 +48,7 @@ function Donors(props) {
 							<ListGroup.Item variant='secondary'>
 								Last gift: {donor.lastgift}, {donor.lastgiftdate}
 							</ListGroup.Item>
-							{donor.phone != "" ? (
+							{donor.phone !== "" ? (
 								<ListGroup.Item variant='info'>
 									Phone: {donor.phone}
 								</ListGroup.Item>
