@@ -6,10 +6,11 @@ function DonorModal(props) {
 		return (
 			<Modal
 				show={props.show}
-				{...props}
 				size='lg'
 				aria-labelledby='contained-modal-title-vcenter'
-				onHide={props.handleHide}
+				onHide={() => {
+					props.handlehide("show");
+				}}
 				centered
 			>
 				<Modal.Header closeButton>
@@ -28,9 +29,15 @@ function DonorModal(props) {
 								No phone number available
 							</ListGroup.Item>
 						)}
-						<ListGroup.Item variant='secondary'>
-							Email: {props.donor.email}
-						</ListGroup.Item>
+						{props.donor.email !== "" ? (
+							<ListGroup.Item variant='secondary'>
+								Email: {props.donor.email}
+							</ListGroup.Item>
+						) : (
+							<ListGroup.Item variant='secondary' disabled>
+								No email address available
+							</ListGroup.Item>
+						)}
 						<ListGroup.Item variant='info'>
 							Year total: {props.donor.yeartotal}
 						</ListGroup.Item>
@@ -56,11 +63,35 @@ function DonorModal(props) {
 								Donations made: 1
 							</ListGroup.Item>
 						)}
-						<ListGroup.Item variant='info'></ListGroup.Item>
+						<ListGroup.Item variant='info'>
+							Comments: {props.donor.comments}
+						</ListGroup.Item>
 					</ListGroup>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button onClick={props.handleHide}>Close</Button>
+					<Button variant='danger' onClick={props.delete}>
+						Delete
+					</Button>
+					<Button
+						variant='outline-info'
+						onClick={() => {
+							props.handlehide("show");
+							setTimeout(() => {
+								props.handleShow("edit");
+							}, 250);
+						}}
+					>
+						Edit
+					</Button>
+					<Button
+						className='deletBtn'
+						variant='outline-info'
+						onClick={() => {
+							props.handlehide("show");
+						}}
+					>
+						Close
+					</Button>
 				</Modal.Footer>
 			</Modal>
 		);

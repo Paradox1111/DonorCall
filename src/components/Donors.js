@@ -1,18 +1,63 @@
 import React, { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
 import { Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
 import DonorModal from "./DonorModal";
+import EditDonor from "./EditDonor";
+import ConfirmDelete from "./ConfirmDelete";
+import axios from "axios";
 
 function Donors(props) {
-	// const [query, setQuery] = useState(null);
+	const [query, setQuery] = useState(null);
 	const [show, setShow] = useState(false);
+	const [showDelete, setShowDelete] = useState(false);
+	const [showEdit, setShowEdit] = useState(false);
 	const [currentDonor, setCurrentDonor] = useState(null);
-	const handleHide = () => {
-		setShow(false);
+	const handlehide = modal => {
+		switch (modal) {
+			case "show":
+				setShow(false);
+				break;
+			case "delete":
+				setShowDelete(false);
+				break;
+			case "edit":
+				setShowEdit(false);
+				break;
+		}
 	};
-	const handleShow = () => {
-		setShow(true);
+	const handleShow = modal => {
+		switch (modal) {
+			case "show":
+				setShow(true);
+				break;
+			case "delete":
+				setShowDelete(true);
+				break;
+			case "edit":
+				setShowEdit(true);
+				break;
+		}
+	};
+	const deleteDonor = (e, id) => {
+		e.preventDefault();
+	};
+	const editDonor = (e, id) => {
+		e.preventDefault();
+		const donor = {
+			orgName: e.target.orgName.value,
+			lastname: e.target.lastname.value,
+			phone: e.target.phone.value,
+			email: e.target.email.value,
+			yeartotal: e.target.yeartotal.value,
+			lastgift: e.target.lastgift.value,
+			lastgiftdate: e.target.lastgiftdate.value,
+			nextlastgift: e.target.nextlastgift.value,
+			nextlastgiftdate: e.target.nextlastgiftdate.value,
+			paymentnum: e.target.paymentnum.value,
+			comments: e.target.comments.value
+		};
+		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
+		axios.post(url, donor);
 	};
 	useEffect(() => {
 		if (!ls.get("user")) {
@@ -30,8 +75,8 @@ function Donors(props) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return
 		let filteredDonors = props.donors.map(donor => (
-			<Col key={donor.id}>
-				<Card className='donorCard' style={{ width: "22rem" }}>
+			<Col className='donorCol' key={donor.id}>
+				<Card className='donorCard text-center' style={{ width: "22rem" }}>
 					<Card.Body>
 						{donor.lastname ? (
 							<Card.Header>
@@ -62,7 +107,7 @@ function Donors(props) {
 						<Button
 							onClick={() => {
 								setCurrentDonor(donor);
-								setShow(true);
+								handleShow("show");
 							}}
 							variant='outline-primary'
 							block
@@ -77,7 +122,29 @@ function Donors(props) {
 			<div>
 				<Row>Search Bar</Row>
 
-				<DonorModal show={show} handleHide={handleHide} donor={currentDonor} />
+				{currentDonor && (
+					<div>
+						<DonorModal
+							show={show}
+							handleShow={handleShow}
+							handlehide={handlehide}
+							donor={currentDonor}
+						/>
+
+						<ConfirmDelete
+							showDelete={showDelete}
+							handlehide={handlehide}
+							donor={currentDonor}
+						/>
+
+						<EditDonor
+							showEdit={showEdit}
+							handlehide={handlehide}
+							editDonor={editDonor}
+							donor={currentDonor}
+						/>
+					</div>
+				)}
 
 				<Row>{filteredDonors}</Row>
 			</div>

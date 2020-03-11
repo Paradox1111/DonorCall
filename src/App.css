@@ -29,9 +29,17 @@ body {
 	display: grid;
 	grid-template-columns: 2;
 }
+.donorCol {
+	text-align: center;
+}
 .donorCard {
+	display: inline-block;
 	grid-column-start: auto;
 	margin-top: 10px;
+	border: 1px solid black;
+}
+.deleteBtn {
+	float: left;
 }
 @media only screen and (max-width: 420px) {
 	.title {
