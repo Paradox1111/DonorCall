@@ -6,7 +6,23 @@ import axios from "axios";
 function Donors(props) {
 	const [query, setQuery] = useState(null);
 	const [stewId, setStewId] = useState(null);
-	const [filter, setFilter] = useState(true);
+	const [filter, setFilter] = useState(false);
+	const toggleFilter = () => {
+		if (props.stewards) {
+			//if props contains stewards and stewId hasn't already been set
+			//set stewID = current user id
+			let currentSteward = props.stewards.filter(
+				stew => stew.username === ls.get("user").username
+			);
+			setStewId(currentSteward[0].id);
+		}
+
+		if (filter) {
+			setFilter(false);
+		} else {
+			setFilter(true);
+		}
+	};
 	const deleteDonor = (e, id) => {
 		e.preventDefault();
 		const access = ls.get("user").tokens.access;
@@ -72,20 +88,15 @@ function Donors(props) {
 			let access = ls.get("user").tokens.access;
 			props.getDonors(access);
 		}
-		const access = ls.get("user").tokens.access;
-		props.getStewards(access);
+		if (ls.get("user")) {
+			const access = ls.get("user").tokens.access;
+			props.getStewards(access);
+		}
 	}, []);
 	if (ls.get("user") && props.donors) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return
-		if (props.stewards && !stewId) {
-			//if props contains stewards and stewId hasn't already been set
-			//set stewID = current user id
-			let currentSteward = props.stewards.filter(
-				stew => stew.username === ls.get("user").username
-			);
-			setStewId(currentSteward[0].id);
-		}
+
 		let filteredDonors = null;
 		if (filter) {
 			//if filter is true return donors pertaining to the current user, alphabetized
@@ -146,23 +157,11 @@ function Donors(props) {
 		return (
 			<div>
 				{!filter ? (
-					<Button
-						onClick={() => {
-							setFilter(true);
-						}}
-						variant='info'
-						block
-					>
+					<Button onClick={toggleFilter} variant='info' block>
 						View donors for current steward
 					</Button>
 				) : (
-					<Button
-						onClick={() => {
-							setFilter(false);
-						}}
-						variant='info'
-						block
-					>
+					<Button onClick={toggleFilter} variant='info' block>
 						View all donors
 					</Button>
 				)}

@@ -73,10 +73,10 @@ function App() {
 		//if there's a user in localstorage, set state
 		if (ls.get("user")) {
 			setUser(ls.get("user"));
-		}
-		if (!stewards) {
-			const access = ls.get("user").tokens.access;
-			getStewards(access);
+			if (!stewards) {
+				const access = ls.get("user").tokens.access;
+				getStewards(access);
+			}
 		}
 	}, []);
 	const refresh = () => {
