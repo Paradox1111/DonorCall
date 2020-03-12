@@ -16,6 +16,7 @@ function App() {
 	const [user, setUser] = useState(null);
 	const [show, setShow] = useState(false);
 	const [donors, setDonors] = useState(null);
+	const [stewards, setStewards] = useState(null);
 	useEffect(() => {
 		if (ls.get("user")) {
 			setUser(ls.get("user"));
@@ -86,7 +87,7 @@ function App() {
 				if (response.statusText !== "OK") {
 					refresh();
 					setTimeout(() => {
-						getDonors();
+						getDonors(access);
 					}, 500);
 				} else {
 					setDonors(response.data);
@@ -153,7 +154,18 @@ function App() {
 							)}
 						/>
 						<Route exact path='/stewards/new' render={NewSteward} />
-						<Route path='/stewards' component={Stewards} />
+						<Route
+							path='/stewards'
+							render={() => (
+								<Stewards
+									stewards={stewards}
+									showLogin={showLogin}
+									hideLogin={hideLogin}
+									setStewards={setStewards}
+									refresh={refresh}
+								/>
+							)}
+						/>
 						<Route path='/donors/new' render={NewDonor} />
 					</Switch>
 				</main>

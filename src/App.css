@@ -38,6 +38,15 @@ body {
 	margin-top: 10px;
 	border: 1px solid black;
 }
+.stewCol {
+	text-align: center;
+}
+.stewCard {
+	display: inline-block;
+	grid-column-start: auto;
+	margin-top: 10px;
+	border: 1px solid black;
+}
 .deleteBtn {
 	float: left;
 }
