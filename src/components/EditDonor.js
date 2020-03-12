@@ -16,8 +16,8 @@ function EditDonor(props) {
 				<Modal.Title id='contained-modal-title-vcenter'>Edit</Modal.Title>
 			</Modal.Header>
 			<Form
-				onSubmit={() => {
-					props.editDonor(props.donor.id);
+				onSubmit={e => {
+					props.editDonor(e, props.donor.id);
 				}}
 			>
 				<Modal.Body>

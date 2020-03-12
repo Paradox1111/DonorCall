@@ -69,7 +69,15 @@ function DonorModal(props) {
 					</ListGroup>
 				</Modal.Body>
 				<Modal.Footer>
-					<Button variant='danger' onClick={props.delete}>
+					<Button
+						variant='danger'
+						onClick={() => {
+							props.handlehide("show");
+							setTimeout(() => {
+								props.handleShow("delete");
+							}, 250);
+						}}
+					>
 						Delete
 					</Button>
 					<Button

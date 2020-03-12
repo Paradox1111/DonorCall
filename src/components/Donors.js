@@ -40,6 +40,13 @@ function Donors(props) {
 	};
 	const deleteDonor = (e, id) => {
 		e.preventDefault();
+		const access = ls.get("user").tokens.access;
+		const config = { headers: { Authorization: `Bearer ${access}` } };
+		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
+		axios
+			.delete(url, config)
+			.then(console.log)
+			.catch(console.error);
 	};
 	const editDonor = (e, id) => {
 		e.preventDefault();
@@ -56,8 +63,13 @@ function Donors(props) {
 			paymentnum: e.target.paymentnum.value,
 			comments: e.target.comments.value
 		};
+		const access = ls.get("user").tokens.access;
+		const config = { headers: { Authorization: `Bearer ${access}` } };
 		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
-		axios.post(url, donor);
+		axios
+			.post(url, donor, config)
+			.then(console.log)
+			.catch(console.error);
 	};
 	useEffect(() => {
 		if (!ls.get("user")) {
@@ -135,6 +147,7 @@ function Donors(props) {
 							showDelete={showDelete}
 							handlehide={handlehide}
 							donor={currentDonor}
+							deleteDonor={deleteDonor}
 						/>
 
 						<EditDonor

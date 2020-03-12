@@ -8,22 +8,33 @@ function ConfirmDelete(props) {
 			size='lg'
 			aria-labelledby='contained-modal-title-vcenter'
 			centered
+			onHide={() => {
+				props.handlehide("delete");
+			}}
 		>
 			<Modal.Header closeButton>
 				<Modal.Title id='contained-modal-title-vcenter'>
-					Modal heading
+					Are you sure you wish to delete this donor?
 				</Modal.Title>
 			</Modal.Header>
-			<Modal.Body>
-				<h4>Centered Modal</h4>
-				<p>
-					Cras mattis consectetur purus sit amet fermentum. Cras justo odio,
-					dapibus ac facilisis in, egestas eget quam. Morbi leo risus, porta ac
-					consectetur ac, vestibulum at eros.
-				</p>
-			</Modal.Body>
+			<Modal.Body>This cannot be undone!</Modal.Body>
 			<Modal.Footer>
-				<Button onClick={props.onHide}>Close</Button>
+				<Button
+					onClick={e => {
+						props.handlehide("delete");
+						props.deleteDonor(e, props.donor.id);
+					}}
+					variant='danger'
+				>
+					Delete
+				</Button>
+				<Button
+					onClick={e => {
+						props.handlehide("delete");
+					}}
+				>
+					Close
+				</Button>
 			</Modal.Footer>
 		</Modal>
 	);
