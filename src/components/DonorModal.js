@@ -5,7 +5,7 @@ function DonorModal(props) {
 	if (props.donor) {
 		return (
 			<Modal
-				show={props.show}
+				show={props.showDonor}
 				size='lg'
 				aria-labelledby='contained-modal-title-vcenter'
 				onHide={() => {
@@ -72,7 +72,7 @@ function DonorModal(props) {
 					<Button
 						variant='danger'
 						onClick={() => {
-							props.handlehide("show");
+							props.handlehide("showDonor");
 							setTimeout(() => {
 								props.handleShow("delete");
 							}, 250);
@@ -83,7 +83,7 @@ function DonorModal(props) {
 					<Button
 						variant='outline-info'
 						onClick={() => {
-							props.handlehide("show");
+							props.handlehide("showDonor");
 							setTimeout(() => {
 								props.handleShow("edit");
 							}, 250);
@@ -95,7 +95,7 @@ function DonorModal(props) {
 						className='deletBtn'
 						variant='outline-info'
 						onClick={() => {
-							props.handlehide("show");
+							props.handlehide("showDonor");
 						}}
 					>
 						Close

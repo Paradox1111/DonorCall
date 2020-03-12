@@ -50,6 +50,9 @@ body {
 .deleteBtn {
 	float: left;
 }
+.hidden {
+	display: none;
+}
 @media only screen and (max-width: 420px) {
 	.title {
 		display: none;

@@ -1,43 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
-import DonorModal from "./DonorModal";
-import EditDonor from "./EditDonor";
-import ConfirmDelete from "./ConfirmDelete";
 import axios from "axios";
 
 function Donors(props) {
 	const [query, setQuery] = useState(null);
-	const [show, setShow] = useState(false);
-	const [showDelete, setShowDelete] = useState(false);
-	const [showEdit, setShowEdit] = useState(false);
-	const [currentDonor, setCurrentDonor] = useState(null);
-	const handlehide = modal => {
-		switch (modal) {
-			case "show":
-				setShow(false);
-				break;
-			case "delete":
-				setShowDelete(false);
-				break;
-			case "edit":
-				setShowEdit(false);
-				break;
-		}
-	};
-	const handleShow = modal => {
-		switch (modal) {
-			case "show":
-				setShow(true);
-				break;
-			case "delete":
-				setShowDelete(true);
-				break;
-			case "edit":
-				setShowEdit(true);
-				break;
-		}
-	};
+	const [stewId, setStewId] = useState(null);
+	const [filter, setFilter] = useState(true);
 	const deleteDonor = (e, id) => {
 		e.preventDefault();
 		const access = ls.get("user").tokens.access;
@@ -83,22 +52,54 @@ function Donors(props) {
 			})
 			.catch(console.error);
 	};
+	const alphabetize = (a, b) => {
+		if (a.orgName < b.orgName) {
+			return -1;
+		}
+		if (a.orgName > b.orgName) {
+			return 1;
+		}
+		return 0;
+	};
 	useEffect(() => {
 		if (!ls.get("user")) {
 			//if a user is not currently logged in
 			//prompt the user to login
-			props.showLogin();
+			props.handleShow("login");
 		} else if (!props.donors) {
 			//if a user is currently logged in and props does not contain donors
 			//fetch donors with the current user's access token
 			let access = ls.get("user").tokens.access;
 			props.getDonors(access);
 		}
-	});
+		const access = ls.get("user").tokens.access;
+		props.getStewards(access);
+	}, []);
 	if (ls.get("user") && props.donors) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return
-		let filteredDonors = props.donors.map(donor => (
+		if (props.stewards && !stewId) {
+			//if props contains stewards and stewId hasn't already been set
+			//set stewID = current user id
+			let currentSteward = props.stewards.filter(
+				stew => stew.username === ls.get("user").username
+			);
+			setStewId(currentSteward[0].id);
+		}
+		let filteredDonors = null;
+		if (filter) {
+			//if filter is true return donors pertaining to the current user, alphabetized
+			filteredDonors = props.donors.filter(donor => {
+				return donor.user_id === stewId;
+			});
+			filteredDonors.sort(alphabetize);
+		} else {
+			//otherwise return all donors, alphabetized
+			filteredDonors = props.donors;
+			filteredDonors.sort(alphabetize);
+		}
+
+		let donorElems = filteredDonors.map(donor => (
 			<Col className='donorCol' key={donor.id}>
 				<Card className='donorCard text-center' style={{ width: "22rem" }}>
 					<Card.Body>
@@ -130,8 +131,8 @@ function Donors(props) {
 
 						<Button
 							onClick={() => {
-								setCurrentDonor(donor);
-								handleShow("show");
+								props.setCurrentDonor(donor);
+								props.handleShow("showDonor");
 							}}
 							variant='outline-primary'
 							block
@@ -144,34 +145,29 @@ function Donors(props) {
 		));
 		return (
 			<div>
-				<Row>Search Bar</Row>
-
-				{currentDonor && (
-					<div>
-						<DonorModal
-							show={show}
-							handleShow={handleShow}
-							handlehide={handlehide}
-							donor={currentDonor}
-						/>
-
-						<ConfirmDelete
-							showDelete={showDelete}
-							handlehide={handlehide}
-							donor={currentDonor}
-							deleteDonor={deleteDonor}
-						/>
-
-						<EditDonor
-							showEdit={showEdit}
-							handlehide={handlehide}
-							editDonor={editDonor}
-							donor={currentDonor}
-						/>
-					</div>
+				{!filter ? (
+					<Button
+						onClick={() => {
+							setFilter(true);
+						}}
+						variant='info'
+						block
+					>
+						View donors for current steward
+					</Button>
+				) : (
+					<Button
+						onClick={() => {
+							setFilter(false);
+						}}
+						variant='info'
+						block
+					>
+						View all donors
+					</Button>
 				)}
 
-				<Row>{filteredDonors}</Row>
+				<Row>{donorElems}</Row>
 			</div>
 		);
 	} else if (!ls.get("user")) {

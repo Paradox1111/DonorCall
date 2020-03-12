@@ -8,27 +8,77 @@ import Stewards from "./components/Stewards";
 import NewSteward from "./components/NewSteward";
 import NewDonor from "./components/NewDonor";
 import Login from "./components/Login";
+import DonorModal from "./components/DonorModal";
+import EditDonor from "./components/EditDonor";
+import ConfirmDelete from "./components/ConfirmDelete";
 import "./App.css";
 import { Nav, Row, Container, NavDropdown, Navbar } from "react-bootstrap";
 
 function App() {
-	// let tempUser = JSON.parse(localStorage.getItem("user")) || null;
 	const [user, setUser] = useState(null);
-	const [show, setShow] = useState(false);
 	const [donors, setDonors] = useState(null);
 	const [stewards, setStewards] = useState(null);
+	const [showLogin, setShowLogin] = useState(false);
+	const [showDonor, setShowDonor] = useState(false);
+	const [showDelete, setShowDelete] = useState(false);
+	const [showEdit, setShowEdit] = useState(false);
+	const [showNewDonor, setShowNewDonor] = useState(false);
+	const [showNewSteward, setShowNewSteward] = useState(false);
+	const [currentDonor, setCurrentDonor] = useState(null);
+	const handlehide = modal => {
+		switch (modal) {
+			case "showDonor":
+				setShowDonor(false);
+				break;
+			case "delete":
+				setShowDelete(false);
+				break;
+			case "edit":
+				setShowEdit(false);
+				break;
+			case "login":
+				setShowLogin(false);
+				break;
+			case "newDonor":
+				setShowNewDonor(false);
+				break;
+			case "newSteward":
+				setShowNewSteward(false);
+				break;
+		}
+	};
+	const handleShow = modal => {
+		switch (modal) {
+			case "showDonor":
+				setShowDonor(true);
+				break;
+			case "delete":
+				setShowDelete(true);
+				break;
+			case "edit":
+				setShowEdit(true);
+				break;
+			case "login":
+				setShowLogin(true);
+				break;
+			case "newDonor":
+				setShowNewDonor(true);
+				break;
+			case "newSteward":
+				setShowNewSteward(true);
+				break;
+		}
+	};
 	useEffect(() => {
+		//if there's a user in localstorage, set state
 		if (ls.get("user")) {
 			setUser(ls.get("user"));
 		}
+		if (!stewards) {
+			const access = ls.get("user").tokens.access;
+			getStewards(access);
+		}
 	}, []);
-	const hideLogin = () => {
-		setShow(false);
-	};
-
-	const showLogin = () => {
-		setShow(true);
-	};
 	const refresh = () => {
 		const url = "https://donor-call-api.herokuapp.com/api/token/refresh/";
 		axios
@@ -68,7 +118,7 @@ function App() {
 			}
 		});
 		setTimeout(() => {
-			hideLogin();
+			handlehide("login");
 		}, 750);
 	};
 	const logout = () => {
@@ -91,6 +141,80 @@ function App() {
 					}, 500);
 				} else {
 					setDonors(response.data);
+				}
+			})
+			.catch(console.error);
+	};
+	const deleteDonor = (e, id) => {
+		e.preventDefault();
+		const access = ls.get("user").tokens.access;
+		const config = { headers: { Authorization: `Bearer ${access}` } };
+		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
+		axios
+			.delete(url, config)
+			.then(response => {
+				if (response.statusText !== "OK") {
+					refresh();
+					setTimeout(() => {
+						deleteDonor(e, id);
+					}, 500);
+				}
+			})
+			.catch(console.error);
+	};
+	const editDonor = (e, id) => {
+		e.preventDefault();
+		const donor = {
+			user_id: e.target.user_id.value,
+			id: id,
+			orgName: e.target.orgName.value,
+			lastname: e.target.lastname.value,
+			phone: e.target.phone.value,
+			email: e.target.email.value,
+			yeartotal: e.target.yeartotal.value,
+			lastgift: e.target.lastgift.value,
+			lastgiftdate: e.target.lastgiftdate.value,
+			nextlastgift: e.target.nextlastgift.value,
+			nextlastgiftdate: e.target.nextlastgiftdate.value,
+			botsteward: e.target.botsteward.value,
+			paymentnum: e.target.paymentnum.value,
+			comments: e.target.comments.value
+		};
+
+		const access = ls.get("user").tokens.access;
+
+		const config = {
+			headers: {
+				Authorization: `Bearer ${access}`
+			}
+		};
+		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
+
+		axios
+			.put(url, donor, config)
+			.then(response => {
+				if (response.statusText !== "OK") {
+					throw Error(response.statusText);
+				}
+				return response;
+			})
+			.catch(console.error);
+	};
+	const getStewards = access => {
+		const config = {
+			headers: { Authorization: `Bearer ${access}` }
+		};
+		const url = "https://donor-call-api.herokuapp.com/stewards";
+		axios
+			.get(url, config)
+			.then(response => {
+				if (response.statusText !== "OK") {
+					refresh();
+					setTimeout(() => {
+						getStewards(access);
+					}, 500);
+				} else {
+					setStewards(response.data);
 				}
 			})
 			.catch(console.error);
@@ -119,13 +243,22 @@ function App() {
 								Add a steward
 							</NavDropdown.Item>
 
-							<NavDropdown.Item href='/donors/new'>
+							<NavDropdown.Item
+								onClick={() => {
+									handleShow("newDonor");
+								}}
+							>
 								Add a donor
 							</NavDropdown.Item>
 						</NavDropdown>
 
 						{!user ? (
-							<Nav.Link className='link' onClick={showLogin}>
+							<Nav.Link
+								className='link'
+								onClick={() => {
+									handleShow("login");
+								}}
+							>
 								Login
 							</Nav.Link>
 						) : (
@@ -136,9 +269,52 @@ function App() {
 					</Nav>
 				</Navbar>
 			</Row>
-			{show && <Login hideLogin={hideLogin} handleLogin={login} />}
+			{showLogin && (
+				<Login
+					hideLogin={() => {
+						handlehide("login");
+					}}
+					handleLogin={login}
+				/>
+			)}
+			{showNewDonor && (
+				<NewDonor
+					showNewDonor={showNewDonor}
+					handlehide={handlehide}
+					stewards={stewards}
+					getStewards={getStewards}
+					getDonors={getDonors}
+				/>
+			)}
 			<Row>
 				<main>
+					{currentDonor && (
+						<div>
+							<DonorModal
+								showDonor={showDonor}
+								handleShow={handleShow}
+								handlehide={handlehide}
+								donor={currentDonor}
+							/>
+
+							<ConfirmDelete
+								showDelete={showDelete}
+								handlehide={handlehide}
+								donor={currentDonor}
+								deleteDonor={deleteDonor}
+							/>
+
+							<EditDonor
+								showEdit={showEdit}
+								handlehide={handlehide}
+								editDonor={editDonor}
+								getDonors={getDonors}
+								donor={currentDonor}
+								stewards={stewards}
+								getStewards={getStewards}
+							/>
+						</div>
+					)}
 					<Switch>
 						<Route
 							exact
@@ -146,10 +322,17 @@ function App() {
 							render={() => (
 								<Donors
 									donors={donors}
-									showLogin={showLogin}
-									hideLogin={hideLogin}
+									currentDonor={currentDonor}
+									setCurrentDonor={setCurrentDonor}
 									getDonors={getDonors}
 									refresh={refresh}
+									handlehide={handlehide}
+									handleShow={handleShow}
+									showDelete={showDelete}
+									showEdit={showEdit}
+									showDonor={showDonor}
+									getStewards={getStewards}
+									stewards={stewards}
 								/>
 							)}
 						/>
@@ -160,8 +343,9 @@ function App() {
 								<Stewards
 									stewards={stewards}
 									showLogin={showLogin}
-									hideLogin={hideLogin}
+									handlehide={handlehide}
 									setStewards={setStewards}
+									getStewards={getStewards}
 									refresh={refresh}
 								/>
 							)}
