@@ -45,7 +45,14 @@ function Donors(props) {
 		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
 		axios
 			.delete(url, config)
-			.then(console.log)
+			.then(response => {
+				if (response.statusText !== "OK") {
+					props.refresh();
+					setTimeout(() => {
+						deleteDonor(e, id);
+					}, 500);
+				}
+			})
 			.catch(console.error);
 	};
 	const editDonor = (e, id) => {
@@ -68,7 +75,12 @@ function Donors(props) {
 		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
 		axios
 			.post(url, donor, config)
-			.then(console.log)
+			.then(response => {
+				if (!response.ok) {
+					throw Error(response.statusText);
+				}
+				return response;
+			})
 			.catch(console.error);
 	};
 	useEffect(() => {

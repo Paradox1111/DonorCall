@@ -83,7 +83,14 @@ function App() {
 		axios
 			.get(url, config)
 			.then(response => {
-				setDonors(response.data);
+				if (response.statusText !== "OK") {
+					refresh();
+					setTimeout(() => {
+						getDonors();
+					}, 500);
+				} else {
+					setDonors(response.data);
+				}
 			})
 			.catch(console.error);
 	};
@@ -141,6 +148,7 @@ function App() {
 									showLogin={showLogin}
 									hideLogin={hideLogin}
 									getDonors={getDonors}
+									refresh={refresh}
 								/>
 							)}
 						/>
