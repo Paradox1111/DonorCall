@@ -31,7 +31,7 @@ function Login(props) {
 									</Form.Label>
 									<Form.Control
 										className='loginInput'
-										type='text'
+										type='password'
 										htmlFor='password'
 										id='password'
 										name='password'

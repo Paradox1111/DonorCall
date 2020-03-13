@@ -171,13 +171,16 @@ function NewDonor(props) {
 						</Form.Group>
 					</Modal.Body>
 					<Modal.Footer>
-						<Button type='submit'>Submit</Button>
+						<Button variant='outline-success' type='submit'>
+							Submit
+						</Button>
 						<Button
+							variant='outline-info'
 							onClick={() => {
-								props.handlehide("edit");
+								props.handlehide("newDonor");
 							}}
 						>
-							Close
+							Cancel
 						</Button>
 					</Modal.Footer>
 				</Form>

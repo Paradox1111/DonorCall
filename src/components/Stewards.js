@@ -5,8 +5,12 @@ import { Container, Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 
 function Stewards(props) {
 	useEffect(() => {
-		const access = ls.get("user").tokens.access;
-		props.getStewards(access);
+		if (ls.get("user")) {
+			const access = ls.get("user").tokens.access;
+			props.getStewards(access);
+		} else {
+			props.handleShow("login");
+		}
 	}, []);
 	if (props.stewards) {
 		let stewards = props.stewards.map(stew => (

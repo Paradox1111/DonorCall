@@ -21,6 +21,7 @@ function ConfirmDelete(props) {
 			<Modal.Footer>
 				<Button
 					onClick={e => {
+						e.preventDefault();
 						props.handlehide("delete");
 						props.deleteDonor(e, props.donor.id);
 					}}
@@ -29,7 +30,7 @@ function ConfirmDelete(props) {
 					Delete
 				</Button>
 				<Button
-					onClick={e => {
+					onClick={() => {
 						props.handlehide("delete");
 					}}
 				>

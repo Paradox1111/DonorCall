@@ -8,15 +8,6 @@ function Donors(props) {
 	const [stewId, setStewId] = useState(null);
 	const [filter, setFilter] = useState(false);
 	const toggleFilter = () => {
-		if (props.stewards) {
-			//if props contains stewards and stewId hasn't already been set
-			//set stewID = current user id
-			let currentSteward = props.stewards.filter(
-				stew => stew.username === ls.get("user").username
-			);
-			setStewId(currentSteward[0].id);
-		}
-
 		if (filter) {
 			setFilter(false);
 		} else {
@@ -87,12 +78,20 @@ function Donors(props) {
 			//fetch donors with the current user's access token
 			let access = ls.get("user").tokens.access;
 			props.getDonors(access);
-		}
-		if (ls.get("user")) {
+		} else if (!props.stewards) {
+			//if user logged in and stewards not in props
+			//get stewards
 			const access = ls.get("user").tokens.access;
 			props.getStewards(access);
+		} else if (props.stewards && stewId !== ls.get("user").id) {
+			//if props contains stewards and stewId is not already set
+			//set stewID = current user id
+			let currentSteward = props.stewards.filter(
+				stew => stew.username === ls.get("user").username
+			);
+			setStewId(currentSteward[0].id);
 		}
-	}, []);
+	});
 	if (ls.get("user") && props.donors) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return
@@ -158,7 +157,7 @@ function Donors(props) {
 			<div>
 				{!filter ? (
 					<Button onClick={toggleFilter} variant='info' block>
-						View donors for current steward
+						View donors for currently logged in steward
 					</Button>
 				) : (
 					<Button onClick={toggleFilter} variant='info' block>

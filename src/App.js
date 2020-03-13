@@ -115,16 +115,17 @@ function App() {
 					tokens: response.data
 				});
 				getDonors(response.data.access);
+				setTimeout(() => {
+					handlehide("login");
+				}, 750);
 			}
 		});
-		setTimeout(() => {
-			handlehide("login");
-		}, 750);
 	};
 	const logout = () => {
 		setUser(null);
 		setDonors(null);
 		ls.set("user", null);
+		setShowLogin(true);
 	};
 	const getDonors = access => {
 		const config = {
@@ -146,18 +147,20 @@ function App() {
 			.catch(console.error);
 	};
 	const deleteDonor = (e, id) => {
-		e.preventDefault();
 		const access = ls.get("user").tokens.access;
 		const config = { headers: { Authorization: `Bearer ${access}` } };
 		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
 		axios
 			.delete(url, config)
 			.then(response => {
-				if (response.statusText !== "OK") {
+				if (response.statusText !== "No Content") {
+					//if the delete fails refresh access token and retry
 					refresh();
 					setTimeout(() => {
 						deleteDonor(e, id);
-					}, 500);
+					}, 250);
+				} else {
+					getDonors(access);
 				}
 			})
 			.catch(console.error);
@@ -239,7 +242,11 @@ function App() {
 						</Nav.Link>
 
 						<NavDropdown className='dropdown' title='New'>
-							<NavDropdown.Item href='/stewards/new'>
+							<NavDropdown.Item
+								onClick={() => {
+									handleShow("newSteward");
+								}}
+							>
 								Add a steward
 							</NavDropdown.Item>
 
@@ -277,7 +284,7 @@ function App() {
 					handleLogin={login}
 				/>
 			)}
-			{showNewDonor && (
+			{showNewDonor && user && (
 				<NewDonor
 					showNewDonor={showNewDonor}
 					handlehide={handlehide}
@@ -286,9 +293,12 @@ function App() {
 					getDonors={getDonors}
 				/>
 			)}
+			{showNewSteward && user && (
+				<NewSteward showNewSteward={showNewSteward} handlehide={handlehide} />
+			)}
 			<Row>
 				<main>
-					{currentDonor && (
+					{currentDonor && user && (
 						<div>
 							<DonorModal
 								showDonor={showDonor}
@@ -344,6 +354,7 @@ function App() {
 									stewards={stewards}
 									showLogin={showLogin}
 									handlehide={handlehide}
+									handleShow={handleShow}
 									setStewards={setStewards}
 									getStewards={getStewards}
 									refresh={refresh}

@@ -9,7 +9,7 @@ function DonorModal(props) {
 				size='lg'
 				aria-labelledby='contained-modal-title-vcenter'
 				onHide={() => {
-					props.handlehide("show");
+					props.handlehide("showDonor");
 				}}
 				centered
 			>
