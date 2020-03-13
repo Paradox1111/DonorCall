@@ -47,3 +47,8 @@ Fork and clone the repository, then run `npm install` and `npm start` in the roo
 3. commit, push, and open a pull request!
 
 Or you can submit an issue with your suggestions!
+
+### Future plans
+
+- View donors associated with a given steward by selecting that steward
+- download CSV or JSON with all donor information
