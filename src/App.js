@@ -234,6 +234,10 @@ function App() {
 				<Navbar fixed='top' className='nav'>
 					<Navbar.Brand className='title' href='/'>
 						Donor Call
+						<img
+							className='headerImg'
+							src={process.env.PUBLIC_URL + "/favicon.ico"}
+						/>
 					</Navbar.Brand>
 					<Navbar.Toggle aria-controls='basic-navbar-nav' />
 					<Navbar.Collapse id='basic-navbar-nav'></Navbar.Collapse>
