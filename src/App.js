@@ -45,6 +45,8 @@ function App() {
 			case "newSteward":
 				setShowNewSteward(false);
 				break;
+			default:
+				break;
 		}
 	};
 	const handleShow = modal => {
@@ -67,18 +69,10 @@ function App() {
 			case "newSteward":
 				setShowNewSteward(true);
 				break;
+			default:
+				break;
 		}
 	};
-	useEffect(() => {
-		//if there's a user in localstorage, set state
-		if (ls.get("user")) {
-			setUser(ls.get("user"));
-			if (!stewards) {
-				const access = ls.get("user").tokens.access;
-				getStewards(access);
-			}
-		}
-	}, []);
 	const refresh = () => {
 		const url = "https://donor-call-api.herokuapp.com/api/token/refresh/";
 		axios
@@ -222,6 +216,17 @@ function App() {
 			})
 			.catch(console.error);
 	};
+	useEffect(() => {
+		//if there's a user in localstorage, set state
+		if (ls.get("user")) {
+			setUser(ls.get("user"));
+			if (!stewards) {
+				const access = ls.get("user").tokens.access;
+				getStewards(access);
+			}
+		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, []);
 
 	return (
 		<Container>
@@ -233,7 +238,7 @@ function App() {
 					<Navbar.Toggle aria-controls='basic-navbar-nav' />
 					<Navbar.Collapse id='basic-navbar-nav'></Navbar.Collapse>
 					<Nav variant='pills'>
-						<Nav.Link className='link' className='link' href='/'>
+						<Nav.Link className='link' href='/'>
 							Donors
 						</Nav.Link>
 

@@ -1,7 +1,7 @@
 import React, { useEffect } from "react";
 import ls from "local-storage";
-import axios from "axios";
-import { Container, Card, Button, Col, Row, ListGroup } from "react-bootstrap";
+
+import { Card, Col, Row, ListGroup } from "react-bootstrap";
 
 function Stewards(props) {
 	useEffect(() => {
@@ -11,6 +11,7 @@ function Stewards(props) {
 		} else {
 			props.handleShow("login");
 		}
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	if (props.stewards) {
 		let stewards = props.stewards.map(stew => (

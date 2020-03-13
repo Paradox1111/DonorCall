@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Card, Button, Col, Row, ListGroup } from "react-bootstrap";
 import ls from "local-storage";
-import axios from "axios";
 
 function Donors(props) {
-	const [query, setQuery] = useState(null);
 	const [stewId, setStewId] = useState(null);
 	const [filter, setFilter] = useState(false);
 	const toggleFilter = () => {
@@ -14,51 +12,7 @@ function Donors(props) {
 			setFilter(true);
 		}
 	};
-	const deleteDonor = (e, id) => {
-		e.preventDefault();
-		const access = ls.get("user").tokens.access;
-		const config = { headers: { Authorization: `Bearer ${access}` } };
-		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
-		axios
-			.delete(url, config)
-			.then(response => {
-				if (response.statusText !== "OK") {
-					props.refresh();
-					setTimeout(() => {
-						deleteDonor(e, id);
-					}, 500);
-				}
-			})
-			.catch(console.error);
-	};
-	const editDonor = (e, id) => {
-		e.preventDefault();
-		const donor = {
-			orgName: e.target.orgName.value,
-			lastname: e.target.lastname.value,
-			phone: e.target.phone.value,
-			email: e.target.email.value,
-			yeartotal: e.target.yeartotal.value,
-			lastgift: e.target.lastgift.value,
-			lastgiftdate: e.target.lastgiftdate.value,
-			nextlastgift: e.target.nextlastgift.value,
-			nextlastgiftdate: e.target.nextlastgiftdate.value,
-			paymentnum: e.target.paymentnum.value,
-			comments: e.target.comments.value
-		};
-		const access = ls.get("user").tokens.access;
-		const config = { headers: { Authorization: `Bearer ${access}` } };
-		const url = "https://donor-call-api.herokuapp.com/donors/" + id;
-		axios
-			.post(url, donor, config)
-			.then(response => {
-				if (!response.ok) {
-					throw Error(response.statusText);
-				}
-				return response;
-			})
-			.catch(console.error);
-	};
+
 	const alphabetize = (a, b) => {
 		if (a.orgName < b.orgName) {
 			return -1;
@@ -91,7 +45,7 @@ function Donors(props) {
 			);
 			setStewId(currentSteward[0].id);
 		}
-	});
+	}, [props, stewId]);
 	if (ls.get("user") && props.donors) {
 		//If a user is logged in and props does contain donors
 		// map over donors and return

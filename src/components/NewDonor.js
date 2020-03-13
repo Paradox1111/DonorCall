@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, ListGroup, Form, Dropdown } from "react-bootstrap";
+import { Modal, Button, Form, Dropdown } from "react-bootstrap";
 import ls from "local-storage";
 import axios from "axios";
 
@@ -9,6 +9,7 @@ function NewDonor(props) {
 	useEffect(() => {
 		const access = ls.get("user").tokens.access;
 		props.getStewards(access);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, []);
 	const newDonor = e => {
 		e.preventDefault();
